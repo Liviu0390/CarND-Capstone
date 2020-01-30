@@ -48,12 +48,12 @@ class WaypointUpdater(object):
         self.car_state = "Accelerating"
         self.state_changed = True
         self.current_stop_waypoint = -1
-
+        self.stop_idx = -1
 
         # Used to debug final waypoint speed
         self.myFile = open("/home/student/ros_log/log.txt", "w")
 
-        self.waypoint_debug = True
+        self.waypoint_debug = False
 
         if self.waypoint_debug == True:
             str = "      "
@@ -75,8 +75,8 @@ class WaypointUpdater(object):
                 # Get closest waypoint
                 closest_waypoint_idx = self.get_closest_waypoint_idx()
                 state_changed = False
-                break_distance = 5.0
-                stop_distance = 20.0
+                break_distance = 15.0
+                stop_distance  = 10.0
                 speed = 11.0
 
                 # Make sure consider the immediate stop waypoint
@@ -114,14 +114,14 @@ class WaypointUpdater(object):
 
                     if self.car_state == "Accelerating":
                         for i in range(int(break_distance)):
-                            self.base_waypoints.waypoints[closest_waypoint_idx + i - 1].twist.twist.linear.x = speed * i / break_distance
+                            self.base_waypoints.waypoints[closest_waypoint_idx + i - 1].twist.twist.linear.x = speed #* i / break_distance
 
                         for i in range(int(break_distance), int(break_distance + stop_distance)):
                             self.base_waypoints.waypoints[closest_waypoint_idx + i- 1].twist.twist.linear.x = speed
 
                     if self.car_state == "Decelerating":
                         for i in range(int(break_distance)):
-                            self.base_waypoints.waypoints[closest_waypoint_idx + i].twist.twist.linear.x = speed - speed * i / break_distance
+                            self.base_waypoints.waypoints[closest_waypoint_idx + i].twist.twist.linear.x = 0#speed - speed * i / break_distance
 
                         for i in range(int(break_distance), int(break_distance + stop_distance)):
                             self.base_waypoints.waypoints[closest_waypoint_idx + i].twist.twist.linear.x = 0
