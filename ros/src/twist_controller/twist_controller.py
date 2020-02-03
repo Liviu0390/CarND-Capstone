@@ -82,16 +82,15 @@ class Controller(object):
         
         # If deceleration intended use adaptive brake taking into account current speed / intended speed difference
         if (-vel_error > 0):
-            if (current_vel > 0.5):
+            if (current_vel > 0.01):
                 if (linear_vel < current_vel / 1.5):
-                    brake = 100 * (((current_vel / (linear_vel + 0.000001))) * 5.0)
-                    if (brake > 4000):
-                        brake = 4000
+                    brake = 100 * (((current_vel / (linear_vel + 0.000001))) * 7.5)
+                    if (brake > 6000):
+                        brake = 6000
             else:
                 brake = 100
-        
+
         if (brake > 0):
             throttle = 0
-        
-        return throttle, brake, steering
 
+        return throttle, brake, steering
