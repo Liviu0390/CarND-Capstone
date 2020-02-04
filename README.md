@@ -91,9 +91,9 @@ We are working on a fix to line up the OpenCV versions between the two.
 
 
 
-###Writeup
+### Writeup
 
-#Waypoint Updater
+# Waypoint Updater
 
 The purpose of the Waypoint Updater node is to update the target velocity of each waypoint, in order for the car to decelerate or to stop smoothly.
 
@@ -112,7 +112,7 @@ If the traffic light changes from green to red and the car was accelerating in t
 The Waypoint Updater node's output is published on the '/final_waypoints' topic.
 The output are 60 waypoints ahead of the car, containing the target velocities, based on the traffic lights color.
 
-#DriveByWire Node
+# DriveByWire Node
 
 This node is responsible for steering the car and speed control. The node subscribes to '/twist_cmd', '/current_velocity', '/vehicle/dbw_enabled' and '/current_pose'.
 
@@ -128,7 +128,7 @@ The brake value is smaller as the difference in velocities is smaller, and great
 The DBW_node publishes throttle, brake and steering commands for the car, if dbw_is_enabled flag is true.
 
 
-#Traffic Light Detection and Classification
+# Traffic Light Detection and Classification
 
 For proccessing, our team used 2 trained SSD Inception V2 models for our Capstone project:
 	1 SSD model for real-world data
