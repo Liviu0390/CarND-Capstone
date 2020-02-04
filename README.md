@@ -88,3 +88,72 @@ Specific to these libraries, the simulator grader and Carla use the following:
 | OpenMP | N/A | N/A |
 
 We are working on a fix to line up the OpenCV versions between the two.
+
+
+
+### Writeup
+
+# Waypoint Updater
+
+The purpose of the Waypoint Updater node is to update the target velocity of each waypoint, in order for the car to decelerate or to stop smoothly.
+
+The topics to which the Waypoint Updater node subscribes, are:
+'/current_pose' topic, which is used to get the vehicles current position.
+'/base_waypoints' topic, used to get the waypoints ahead of the vehicle position.
+'/traffic_waypoint' topic is used to receive the waypoint information from the Traffic Light Detector node. Traffic waypoint is the waypoint where the car is expected to stop.
+
+The main functionality of the node is to update the the target speed of the car depending on the traffic lights color received from the '/traffic_waypoint' topic.
+If the color of the traffic light is green, no modifications are made.
+If the color detected is red, the car will smoothly slow down and come to a complete stop in an interval declared as stop_distance + break_distance.
+Also, if the traffic light color changes the following rules apply:
+If the traffic light changes from red to green, the target velocity is set up to 25 MPH in the waypoints ahead of the vehicle.
+If the traffic light changes from green to red and the car was accelerating in the stopping distance, the target speed is set to zero, so the car will stop before the traffic light.
+
+The Waypoint Updater node's output is published on the '/final_waypoints' topic.
+The output are 60 waypoints ahead of the car, containing the target velocities, based on the traffic lights color.
+
+# DriveByWire Node
+
+This node is responsible for steering the car and speed control. The node subscribes to '/twist_cmd', '/current_velocity', '/vehicle/dbw_enabled' and '/current_pose'.
+
+In '/twist_cmd' topic, twist commands are published by the waypoint follower node.
+The '/current_velocity' topic is used to determine the linear velocity of the car and provide the data to the controller.
+For manual controll of the car, the '/vehicle/dbw_enabled' topic is used. If true, the throttle, steer and brake are published to the respective topics.
+For steering, the yaw_controller is used and for the throttle a PID controller is used. 
+A subscriber is used for '/current_pose' topic to get the current angle.
+
+In the control method in the twist_controller.py, we implemented an adaptive braking system depending on the difference between the target velocity and the current velocity.
+The brake value is smaller as the difference in velocities is smaller, and greater if the difference is bigger. The throttle value is set to zero when brakes are applied.
+
+The DBW_node publishes throttle, brake and steering commands for the car, if dbw_is_enabled flag is true.
+
+
+# Traffic Light Detection and Classification
+
+For proccessing, our team used 2 trained SSD Inception V2 models for our Capstone project:
+	1 SSD model for real-world data
+	1 SSD model for simulator data
+
+For training, we used 200 images for each model that were manually created by us.
+
+The Traffic Light Detection node takes data from the '/image_color', '/current_pose' and '/base_waypoints' topics.
+The '/image_color' topic provides an image stream from the car's camera, which is used to determine the traffic light color.
+The '/current_pose' topic is used to determine the current position of the car.
+And finally, the '/base_waypoints' topic provides a complete list of the course waypoints.
+
+The traffic light state is given by the get_light_state mehod, which is called by process_traffic_lights method.
+The process_traffic_lights method finds the nearest traffic light to the car (closest stop line waypoint index), process the image and return the line waypoint index and the traffic light state.
+
+The logic for the traffic light detector is implemented in the loop() method. 
+If the light state did not changed more than the threshold, the last stable state is used. Otherwise, the new state is used.
+
+The tf detector node publishes to the '/traffic_waypoint' topic the traffic light waypoint where the car needs to stop.
+
+
+# Team members
+| Name | Email  |
+| :-----------: |:-------------:|
+| Alexandru Dan Frujina | alexandru.frujina@wipro.com |
+| Alexandru Moruz | moruz.alexandru@wipro.com |
+| Bogdan Valentin Balan |  bogdan.balan@wipro.com |
+| Dragos Ronald Rugescu |  dragos.rugescu@wipro.com |
