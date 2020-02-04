@@ -52,6 +52,10 @@ class WaypointUpdater(object):
         self.current_lin_vel = 0.0
         self.stop_idx = -1
 
+        self.speed = rospy.get_param('/waypoint_loader/velocity', 40.0)
+        # Convert from kph to mps
+        self.speed *= 0.277
+
         # Used to debug final waypoint speed
         self.waypoint_debug = False
 
@@ -79,7 +83,6 @@ class WaypointUpdater(object):
                 state_changed = False
                 break_distance = 10.0
                 stop_distance = 10.0
-                speed = 11.0
 
                 # Make sure consider the immediate stop waypoint
                 stop_waypoint = self.stop_idx
@@ -118,10 +121,10 @@ class WaypointUpdater(object):
 
                     if self.car_state == "Accelerating":
                         for i in range(int(break_distance)):
-                            self.base_waypoints.waypoints[closest_waypoint_idx + i - 1].twist.twist.linear.x = speed #* i / break_distance
+                            self.base_waypoints.waypoints[closest_waypoint_idx + i - 1].twist.twist.linear.x = self.speed #* i / break_distance
 
                         for i in range(int(break_distance), int(break_distance + stop_distance + 20)):
-                            self.base_waypoints.waypoints[closest_waypoint_idx + i- 1].twist.twist.linear.x = speed
+                            self.base_waypoints.waypoints[closest_waypoint_idx + i- 1].twist.twist.linear.x = self.speed
 
                     if self.car_state == "Decelerating":
                         for i in range(int(break_distance)):
