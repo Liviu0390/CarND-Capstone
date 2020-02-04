@@ -149,3 +149,11 @@ If the light state did not changed more than the threshold, the last stable stat
 
 The tf detector node publishes to the '/traffic_waypoint' topic the traffic light waypoint where the car needs to stop.
 
+
+# Team members
+| Name | Email  |
+| :-----------: |:-------------:|
+| Alexandru Dan Frujina | alexandru.frujina@wipro.com |
+| Alexandru Moruz | moruz.alexandru@wipro.com |
+| Bogdan Valentin Balan |  bogdan.balan@wipro.com |
+| Dragos Ronald Rugescu |  dragos.rugescu@wipro.com |
